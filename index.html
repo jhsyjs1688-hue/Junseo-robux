@@ -1,31 +1,28 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>준서의 로벅스 통장 💰</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);min-height:100vh;font-family:'Apple SD Gothic Neo','Segoe UI',sans-serif;color:#fff}
-button,input,textarea{font-family:inherit}
-input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.35)}
-#header{background:rgba(255,255,255,0.07);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.1);padding:20px}
-.header-inner{display:flex;justify-content:space-between;align-items:center;max-width:520px;margin:0 auto}
-.header-title{font-size:20px;font-weight:800;letter-spacing:-0.5px}
-.header-sub{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px}
-.total-box{background:linear-gradient(135deg,#f7971e,#ffd200);border-radius:14px;padding:10px 16px;text-align:right;box-shadow:0 4px 20px rgba(255,200,0,0.35)}
-.total-label{font-size:10px;color:rgba(0,0,0,0.6);font-weight:700;text-transform:uppercase}
-.total-amount{font-size:24px;font-weight:900;color:#1a0a00;line-height:1.1}
-.r-icon{font-size:14px;font-weight:700;margin-right:2px;opacity:0.7}
-#flash{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;border-radius:40px;padding:12px 24px;z-index:999;box-shadow:0 8px 32px rgba(56,239,125,0.4);font-size:15px;font-weight:600;white-space:nowrap;display:none}
-.tabs{display:flex;max-width:520px;margin:0 auto;padding:12px 20px 0;gap:8px}
-.tab-btn{flex:1;padding:10px 0;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.55);font-weight:600;font-size:13px;cursor:pointer}
-.tab-btn.active{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3)}
-.content{max-width:520px;margin:0 auto;padding:16px 20px 40px}
-.section-title{font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
-.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
-.preset-btn{background:rgba(255,255,255,0.06);border:2px solid;border-radius:14px;padding:14px 10px;cursor:pointer;text-align:center;color:#fff}
-.preset-btn:active{opacity:0.7}
-.p-emoji{font-size:26px;margin-bottom:4px}
-.p-label{font-size:13px;font-weight:700;margin-bottom:3px}
-.p-rob
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>준서의 로벅스 통장</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);min-height:100vh;font-family:sans-serif;color:#fff}#hd{background:rgba(255,255,255,0.07);padding:16px 20px;display:flex;justify-content:space-between;align-items:center}.ht{font-size:18px;font-weight:800}.tb{background:linear-gradient(135deg,#f7971e,#ffd200);border-radius:12px;padding:8px 14px;text-align:right}.tl{font-size:10px;color:rgba(0,0,0,0.6);font-weight:700}.ta{font-size:22px;font-weight:900;color:#1a0a00}#fl{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;border-radius:40px;padding:10px 20px;z-index:999;font-size:14px;font-weight:700;display:none;white-space:nowrap}.nav{display:flex;padding:10px 16px 0;gap:8px;max-width:520px;margin:0 auto}.nb{flex:1;padding:9px 0;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);font-weight:600;font-size:13px;cursor:pointer}.nb.on{background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3)}.pg{display:none;max-width:520px;margin:0 auto;padding:14px 16px 40px}.pg.on{display:block}.st{font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}.pb{background:rgba(255,255,255,0.06);border:2px solid;border-radius:12px;padding:12px 8px;cursor:pointer;text-align:center;color:#fff}.pe{font-size:24px;margin-bottom:3px}.pl{font-size:12px;font-weight:700;margin-bottom:2px}.pr{font-size:15px;font-weight:900}.cb{background:rgba(255,255,255,0.06);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,0.1)}.cr{display:flex;gap:8px;align-items:center}.ci{flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:9px;padding:9px 11px;color:#fff;font-size:13px;outline:none;min-width:0}.ab{background:linear-gradient(135deg,#f7971e,#ffd200);color:#1a0a00;border:none;border-radius:9px;padding:9px 12px;font-weight:800;font-size:13px;cursor:pointer;flex-shrink:0}.em{text-align:center;color:rgba(255,255,255,0.4);padding:50px 20px;font-size:14px}.db{margin-bottom:16px}.dh{display:flex;justify-content:space-between;margin-bottom:6px;padding:0 2px}.dl{font-size:12px;font-weight:700;color:rgba(255,255,255,0.5)}.dt{font-size:13px;font-weight:800;color:#ffd200}.lr{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;margin-bottom:5px;border:1px solid rgba(255,255,255,0.08)}.le{font-size:20px;flex-shrink:0}.li{flex:1}.ln{font-size:13px;font-weight:700}.lt{font-size:11px;color:rgba(255,255,255,0.4)}.lv{font-size:14px;font-weight:900;color:#ffd200;white-space:nowrap}.xb{background:rgba(255,100,100,0.2);border:none;border-radius:5px;color:rgba(255,150,150,0.8);width:22px;height:22px;cursor:pointer;font-size:15px;flex-shrink:0}.bx{background:rgba(255,255,255,0.06);border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.1);margin-bottom:14px}.bt{font-size:15px;font-weight:800;margin-bottom:6px}.bd{font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:12px}.bb{background:linear-gradient(135deg,#f7971e,#ffd200);color:#1a0a00;border:none;border-radius:9px;padding:11px 18px;font-weight:800;font-size:13px;cursor:pointer;width:100%}.rb{background:linear-gradient(135deg,#4ECDC4,#44A08D);color:#fff;border:none;border-radius:9px;padding:11px 18px;font-weight:800;font-size:13px;cursor:pointer;width:100%}textarea{width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:9px;padding:9px 11px;color:#fff;font-size:11px;outline:none;resize:vertical;font-family:monospace;display:block;margin-bottom:8px}.mg{margin-top:8px;font-size:12px;color:#38ef7d;background:rgba(56,239,125,0.1);border-radius:7px;padding:7px 10px}</style></head>
+<body>
+<div id="hd"><div><div class="ht">준서의 로벅스 통장 💰</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px">열심히 하면 로벅스가 쌓여요!</div></div><div class="tb"><div class="tl">보유 로벅스</div><div class="ta">R$<span id="tot">0</span></div></div></div>
+<div id="fl"></div>
+<div class="nav"><button class="nb on" onclick="go('h',this)">🏠 기록</button><button class="nb" onclick="go('l',this)">📋 내역</button><button class="nb" onclick="go('b',this)">💾 백업</button></div>
+<div id="ph" class="pg on"><div class="st">오늘 뭐 했어요?</div><div class="grid" id="gr"></div><div class="cb"><div class="st">직접 입력</div><div class="cr"><input class="ci" id="cl" placeholder="숙제/시험 이름"/><input class="ci" id="cr2" type="number" placeholder="R$" style="width:65px;flex:none"/><button class="ab" onclick="ac()">추가</button></div></div></div>
+<div id="pl" class="pg"><div id="lc"></div></div>
+<div id="pb2" class="pg"><div class="bx"><div class="bt">📤 백업하기</div><div class="bd">버튼 누르면 데이터 나와요. 전체 선택 후 카톡 나에게 보내기!</div><button class="bb" onclick="bk()">데이터 불러오기</button><div id="bo" style="display:none;margin-top:10px"><div style="font-size:12px;color:#ffd200;margin-bottom:5px">⬇️ 아래 텍스트 전체 복사하세요</div><textarea id="bt2" rows="4" readonly onfocus="this.select()"></textarea></div></div><div class="bx"><div class="bt">📥 복원하기</div><div class="bd">카톡에서 백업 텍스트 복사 후 붙여넣고 복원 버튼 눌러요.</div><textarea id="rt" rows="3" placeholder="여기에 붙여넣기..."></textarea><button class="rb" onclick="rs()">복원하기</button><div id="rm" style="display:none" class="mg"></div></div></div>
+<script>
+const P=[{id:"k",l:"구몬",e:"📚",r:40,c:"#FF6B35"},{id:"g",l:"기적",e:"✏️",r:10,c:"#4ECDC4"},{id:"f",l:"필즈 90점+",e:"🏆",r:500,c:"#FFD700"},{id:"w",l:"단어시험 패스",e:"🎯",r:50,c:"#A78BFA"},{id:"b",l:"브레노스 숙제",e:"🧠",r:30,c:"#F472B6"},{id:"fh",l:"필즈 숙제",e:"📐",r:30,c:"#34D399"},{id:"ko",l:"초등국어 독해",e:"🇰🇷",r:20,c:"#60A5FA"},{id:"rd",l:"독서+독서일지",e:"📖",r:10,c:"#FB923C"}];
+const K="jr";let log=[],tot=0;
+function ld(){try{const d=JSON.parse(localStorage.getItem(K)||"{}");log=d.log||[];tot=d.tot||0;}catch(e){}re();}
+function sv(){try{localStorage.setItem(K,JSON.stringify({log,tot}));}catch(e){}}
+function td(){return new Date().toISOString().slice(0,10);}
+function ft(s){return new Date(s).toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"short"});}
+function ae(l,r,e){log.unshift({id:Date.now(),d:td(),l,r,e,t:new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"})});tot+=r;sv();re();fl(l,r);}
+function ac(){const l=document.getElementById("cl").value.trim(),r=parseInt(document.getElementById("cr2").value);if(!l||isNaN(r)||r<=0)return;ae(l,r,"⭐");document.getElementById("cl").value="";document.getElementById("cr2").value="";}
+function de(id){const x=log.find(i=>i.id===id);if(!x)return;log=log.filter(i=>i.id!==id);tot=Math.max(0,tot-x.r);sv();re();}
+function fl(l,r){const f=document.getElementById("fl");f.innerHTML="🎉 "+l+" 완료! +"+r+" R$";f.style.display="block";setTimeout(()=>f.style.display="none",1800);}
+function re(){document.getElementById("tot").textContent=tot.toLocaleString();rp();rl();}
+function rp(){document.getElementById("gr").innerHTML=P.map(p=>`<button class="pb" style="border-color:${p.c}" onclick="ae('${p.l}',${p.r},'${p.e}')"><div class="pe">${p.e}</div><div class="pl">${p.l}</div><div class="pr" style="color:${p.c}">+${p.r} R$</div></button>`).join("");}
+function rl(){const c=document.getElementById("lc");if(!log.length){c.innerHTML='<div class="em">아직 기록이 없어요 💪</div>';return;}const g={};log.forEach(i=>{if(!g[i.d])g[i.d]=[];g[i.d].push(i);});c.innerHTML=Object.keys(g).sort((a,b)=>a<b?1:-1).map(d=>{const dt=g[d].reduce((s,i)=>s+i.r,0);return`<div class="db"><div class="dh"><span class="dl">${ft(d)}</span><span class="dt">+${dt} R$</span></div>${g[d].map(i=>`<div class="lr"><span class="le">${i.e}</span><div class="li"><div class="ln">${i.l}</div><div class="lt">${i.t}</div></div><span class="lv">+${i.r} R$</span><button class="xb" onclick="de(${i.id})">×</button></div>`).join("")}</div>`;}).join("");}
+function go(t,btn){document.querySelectorAll(".pg").forEach(p=>p.classList.remove("on"));document.querySelectorAll(".nb").forEach(b=>b.classList.remove("on"));document.getElementById("p"+t).classList.add("on");btn.classList.add("on");}
+function bk(){document.getElementById("bt2").value=JSON.stringify({log,tot});document.getElementById("bo").style.display="block";document.getElementById("bt2").select();}
+function rs(){const m=document.getElementById("rm");try{const d=JSON.parse(document.getElementById("rt").value.trim());if(!Array.isArray(d.log))throw 0;log=d.log;tot=d.tot||0;sv();re();document.getElementById("rt").value="";m.textContent="✅ 복원 완료!";m.style.display="block";}catch(e){m.textContent="❌ 형식이 맞지 않아요.";m.style.display="block";}setTimeout(()=>m.style.display="none",3000);}
+ld();
+</script></body></html>
