@@ -1,200 +1,31 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>준서의 로벅스 통장 💰</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-height: 100vh; font-family: 'Apple SD Gothic Neo', 'Segoe UI', sans-serif; color: #fff; }
-    input, textarea, button { font-family: inherit; }
-    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.35); }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-  </style>
-</head>
-<body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect } = React;
-const PRESETS = [
-  { id: "kumon",       label: "구몬",          emoji: "📚", robux: 40,  color: "#FF6B35" },
-  { id: "gijeok",     label: "기적",          emoji: "✏️", robux: 10,  color: "#4ECDC4" },
-  { id: "fields_exam",label: "필즈 90점+",    emoji: "🏆", robux: 500, color: "#FFD700" },
-  { id: "word",       label: "단어시험 패스", emoji: "🎯", robux: 50,  color: "#A78BFA" },
-  { id: "brenos",     label: "브레노스 숙제", emoji: "🧠", robux: 30,  color: "#F472B6" },
-  { id: "fields_hw",  label: "필즈 숙제",     emoji: "📐", robux: 30,  color: "#34D399" },
-  { id: "korean",     label: "초등국어 독해", emoji: "🇰🇷", robux: 20,  color: "#60A5FA" },
-  { id: "reading",    label: "독서+독서일지", emoji: "📖", robux: 10,  color: "#FB923C" },
-];
-const STORAGE_KEY = "junseo-robux-data";
-function formatDate(d) { return new Date(d).toLocaleDateString("ko-KR", { month:"long", day:"numeric", weekday:"short" }); }
-function todayKey() { return new Date().toISOString().slice(0,10); }
-function loadData() { try { const r = localStorage.getItem(STORAGE_KEY); if(r) return JSON.parse(r); } catch{} return {log:[],total:0}; }
-function saveData(log,total) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({log,total})); } catch{} }
-
-function App() {
-  const [log,setLog] = useState([]);
-  const [total,setTotal] = useState(0);
-  const [flash,setFlash] = useState(null);
-  const [tab,setTab] = useState("home");
-  const [customLabel,setCustomLabel] = useState("");
-  const [customRobux,setCustomRobux] = useState("");
-  const [backupText,setBackupText] = useState("");
-  const [restoreText,setRestoreText] = useState("");
-  const [restoreMsg,setRestoreMsg] = useState("");
-
-  useEffect(() => { const d=loadData(); setLog(d.log||[]); setTotal(d.total||0); },[]);
-
-  function addEntry(label,robux,emoji) {
-    const entry={id:Date.now(),date:todayKey(),label,robux,emoji,ts:new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"})};
-    const nl=[entry,...log]; const nt=total+robux;
-    setLog(nl); setTotal(nt); saveData(nl,nt);
-    setFlash({robux,label}); setTimeout(()=>setFlash(null),1800);
-  }
-  function handleCustom() {
-    const r=parseInt(customRobux);
-    if(!customLabel.trim()||isNaN(r)||r<=0) return;
-    addEntry(customLabel.trim(),r,"⭐"); setCustomLabel(""); setCustomRobux("");
-  }
-  function deleteEntry(id) {
-    const e=log.find(x=>x.id===id); if(!e) return;
-    const nl=log.filter(x=>x.id!==id); const nt=Math.max(0,total-e.robux);
-    setLog(nl); setTotal(nt); saveData(nl,nt);
-  }
-  function handleBackup() { setBackupText(JSON.stringify({log,total})); }
-  function handleRestore() {
-    try {
-      const d=JSON.parse(restoreText.trim());
-      if(!Array.isArray(d.log)) throw new Error();
-      setLog(d.log); setTotal(d.total||0); saveData(d.log,d.total||0);
-      setRestoreMsg("✅ 복원 완료!"); setRestoreText("");
-    } catch { setRestoreMsg("❌ 형식이 맞지 않아요."); }
-    setTimeout(()=>setRestoreMsg(""),3000);
-  }
-  const grouped=log.reduce((acc,e)=>{if(!acc[e.date])acc[e.date]=[];acc[e.date].push(e);return acc;},{});
-  const s=styles;
-  return (
-    <div style={s.root}>
-      <div style={s.header}><div style={s.headerInner}>
-        <div><div style={s.headerTitle}>준서의 로벅스 통장 💰</div><div style={s.headerSub}>열심히 하면 로벅스가 쌓여요!</div></div>
-        <div style={s.totalBox}><div style={s.totalLabel}>보유 로벅스</div><div style={s.totalAmount}><span style={s.robuxIcon}>R$</span>{total.toLocaleString()}</div></div>
-      </div></div>
-      {flash&&<div style={s.flash}>🎉 {flash.label} 완료! <strong style={{marginLeft:4}}>+{flash.robux} R$</strong></div>}
-      <div style={s.tabs}>
-        {[["home","🏠 기록"],["log","📋 내역"],["backup","💾 백업"]].map(([t,l])=>(
-          <button key={t} style={{...s.tab,...(tab===t?s.tabActive:{})}} onClick={()=>setTab(t)}>{l}</button>
-        ))}
-      </div>
-      <div style={s.content}>
-        {tab==="home"&&(<>
-          <div style={s.sectionTitle}>오늘 뭐 했어요?</div>
-          <div style={s.presetGrid}>
-            {PRESETS.map(p=>(
-              <button key={p.id} style={{...s.presetBtn,borderColor:p.color}} onClick={()=>addEntry(p.label,p.robux,p.emoji)}>
-                <div style={s.presetEmoji}>{p.emoji}</div>
-                <div style={s.presetLabel}>{p.label}</div>
-                <div style={{...s.presetRobux,color:p.color}}>+{p.robux} R$</div>
-              </button>
-            ))}
-          </div>
-          <div style={s.customBox}><div style={s.sectionTitle}>직접 입력</div>
-            <div style={s.customRow}>
-              <input style={s.input} placeholder="숙제/시험 이름" value={customLabel} onChange={e=>setCustomLabel(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleCustom()}/>
-              <input style={{...s.input,width:72,flexShrink:0}} placeholder="R$" type="number" value={customRobux} onChange={e=>setCustomRobux(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleCustom()}/>
-              <button style={s.addBtn} onClick={handleCustom}>추가</button>
-            </div>
-          </div>
-        </>)}
-        {tab==="log"&&(Object.keys(grouped).length===0
-          ?<div style={s.empty}>아직 기록이 없어요. 첫 숙제를 완료해봐요! 💪</div>
-          :Object.keys(grouped).sort((a,b)=>a<b?1:-1).map(date=>{
-            const dt=grouped[date].reduce((s,e)=>s+e.robux,0);
-            return(<div key={date} style={s.dayBlock}>
-              <div style={s.dayHeader}><span style={s.dayLabel}>{formatDate(date)}</span><span style={s.dayTotal}>+{dt} R$</span></div>
-              {grouped[date].map(e=>(
-                <div key={e.id} style={s.logRow}>
-                  <span style={s.logEmoji}>{e.emoji}</span>
-                  <div style={s.logInfo}><span style={s.logLabel}>{e.label}</span><span style={s.logTime}>{e.ts}</span></div>
-                  <span style={s.logRobux}>+{e.robux} R$</span>
-                  <button style={s.deleteBtn} onClick={()=>deleteEntry(e.id)}>×</button>
-                </div>
-              ))}
-            </div>);
-          })
-        )}
-        {tab==="backup"&&(
-          <div style={s.backupSection}>
-            <div style={s.backupBox}>
-              <div style={s.backupTitle}>📤 백업하기</div>
-              <div style={s.backupDesc}>버튼을 누르면 데이터가 나와요.<br/>전체 선택 후 카톡 나에게 보내기에 붙여넣으면 끝!</div>
-              <button style={s.backupBtn} onClick={handleBackup}>데이터 불러오기</button>
-              {backupText&&(<><div style={{...s.backupDesc,marginTop:12,marginBottom:6,color:"#ffd200"}}>⬇️ 아래 텍스트 전체를 복사하세요</div>
-                <textarea style={s.textarea} value={backupText} readOnly rows={5} onFocus={e=>e.target.select()}/></>)}
-            </div>
-            <div style={s.backupBox}>
-              <div style={s.backupTitle}>📥 복원하기</div>
-              <div style={s.backupDesc}>카톡에서 백업 텍스트를 복사한 뒤 아래에 붙여넣고 복원 버튼을 눌러요.</div>
-              <textarea style={{...s.textarea,marginBottom:10}} placeholder="여기에 백업 텍스트 붙여넣기..." value={restoreText} onChange={e=>setRestoreText(e.target.value)} rows={4}/>
-              <button style={{...s.backupBtn,background:"linear-gradient(135deg,#4ECDC4,#44A08D)"}} onClick={handleRestore}>복원하기</button>
-              {restoreMsg&&<div style={s.msg}>{restoreMsg}</div>}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-const styles={
-  root:{minHeight:"100vh"},
-  header:{background:"rgba(255,255,255,0.07)",backdropFilter:"blur(12px)",borderBottom:"1px solid rgba(255,255,255,0.1)",padding:"20px 20px 16px"},
-  headerInner:{display:"flex",justifyContent:"space-between",alignItems:"center",maxWidth:520,margin:"0 auto"},
-  headerTitle:{fontSize:20,fontWeight:800,letterSpacing:-0.5},
-  headerSub:{fontSize:12,color:"rgba(255,255,255,0.55)",marginTop:2},
-  totalBox:{background:"linear-gradient(135deg,#f7971e,#ffd200)",borderRadius:14,padding:"10px 16px",textAlign:"right",boxShadow:"0 4px 20px rgba(255,200,0,0.35)"},
-  totalLabel:{fontSize:10,color:"rgba(0,0,0,0.6)",fontWeight:700,textTransform:"uppercase"},
-  totalAmount:{fontSize:24,fontWeight:900,color:"#1a0a00",lineHeight:1.1},
-  robuxIcon:{fontSize:14,fontWeight:700,marginRight:2,opacity:0.7},
-  flash:{position:"fixed",top:80,left:"50%",transform:"translateX(-50%)",background:"linear-gradient(135deg,#11998e,#38ef7d)",color:"#fff",borderRadius:40,padding:"12px 24px",zIndex:999,boxShadow:"0 8px 32px rgba(56,239,125,0.4)",fontSize:15,fontWeight:600,whiteSpace:"nowrap",display:"flex",alignItems:"center"},
-  tabs:{display:"flex",maxWidth:520,margin:"0 auto",padding:"12px 20px 0",gap:8},
-  tab:{flex:1,padding:"10px 0",borderRadius:10,border:"1px solid rgba(255,255,255,0.15)",background:"rgba(255,255,255,0.05)",color:"rgba(255,255,255,0.55)",fontWeight:600,fontSize:13,cursor:"pointer"},
-  tabActive:{background:"rgba(255,255,255,0.15)",color:"#fff",border:"1px solid rgba(255,255,255,0.3)"},
-  content:{maxWidth:520,margin:"0 auto",padding:"16px 20px 40px"},
-  sectionTitle:{fontSize:13,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:1,marginBottom:12},
-  presetGrid:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:24},
-  presetBtn:{background:"rgba(255,255,255,0.06)",border:"2px solid",borderRadius:14,padding:"14px 10px",cursor:"pointer",textAlign:"center",color:"#fff"},
-  presetEmoji:{fontSize:26,marginBottom:4},
-  presetLabel:{fontSize:13,fontWeight:700,marginBottom:3},
-  presetRobux:{fontSize:16,fontWeight:900},
-  customBox:{background:"rgba(255,255,255,0.06)",borderRadius:16,padding:16,border:"1px solid rgba(255,255,255,0.1)"},
-  customRow:{display:"flex",gap:8,alignItems:"center"},
-  input:{flex:1,background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:10,padding:"10px 12px",color:"#fff",fontSize:14,outline:"none",minWidth:0},
-  addBtn:{background:"linear-gradient(135deg,#f7971e,#ffd200)",color:"#1a0a00",border:"none",borderRadius:10,padding:"10px 14px",fontWeight:800,fontSize:14,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0},
-  empty:{textAlign:"center",color:"rgba(255,255,255,0.4)",padding:"60px 20px",fontSize:15},
-  dayBlock:{marginBottom:20},
-  dayHeader:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8,padding:"0 4px"},
-  dayLabel:{fontSize:13,fontWeight:700,color:"rgba(255,255,255,0.5)"},
-  dayTotal:{fontSize:14,fontWeight:800,color:"#ffd200"},
-  logRow:{display:"flex",alignItems:"center",gap:10,background:"rgba(255,255,255,0.06)",borderRadius:12,padding:"12px 14px",marginBottom:6,border:"1px solid rgba(255,255,255,0.08)"},
-  logEmoji:{fontSize:22,flexShrink:0},
-  logInfo:{flex:1,display:"flex",flexDirection:"column",gap:2},
-  logLabel:{fontSize:14,fontWeight:700},
-  logTime:{fontSize:11,color:"rgba(255,255,255,0.4)"},
-  logRobux:{fontSize:15,fontWeight:900,color:"#ffd200",whiteSpace:"nowrap"},
-  deleteBtn:{background:"rgba(255,100,100,0.2)",border:"none",borderRadius:6,color:"rgba(255,150,150,0.8)",width:24,height:24,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0},
-  backupSection:{display:"flex",flexDirection:"column",gap:16},
-  backupBox:{background:"rgba(255,255,255,0.06)",borderRadius:16,padding:18,border:"1px solid rgba(255,255,255,0.1)"},
-  backupTitle:{fontSize:16,fontWeight:800,marginBottom:8},
-  backupDesc:{fontSize:13,color:"rgba(255,255,255,0.6)",lineHeight:1.6,marginBottom:14},
-  backupBtn:{background:"linear-gradient(135deg,#f7971e,#ffd200)",color:"#1a0a00",border:"none",borderRadius:10,padding:"12px 20px",fontWeight:800,fontSize:14,cursor:"pointer",width:"100%"},
-  textarea:{width:"100%",background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:10,padding:"10px 12px",color:"#fff",fontSize:12,outline:"none",resize:"vertical",fontFamily:"monospace",display:"block"},
-  msg:{marginTop:10,fontSize:13,color:"#38ef7d",background:"rgba(56,239,125,0.1)",borderRadius:8,padding:"8px 12px"},
-};
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-</script>
-</body>
-</html>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>준서의 로벅스 통장 💰</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);min-height:100vh;font-family:'Apple SD Gothic Neo','Segoe UI',sans-serif;color:#fff}
+button,input,textarea{font-family:inherit}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.35)}
+#header{background:rgba(255,255,255,0.07);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.1);padding:20px}
+.header-inner{display:flex;justify-content:space-between;align-items:center;max-width:520px;margin:0 auto}
+.header-title{font-size:20px;font-weight:800;letter-spacing:-0.5px}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px}
+.total-box{background:linear-gradient(135deg,#f7971e,#ffd200);border-radius:14px;padding:10px 16px;text-align:right;box-shadow:0 4px 20px rgba(255,200,0,0.35)}
+.total-label{font-size:10px;color:rgba(0,0,0,0.6);font-weight:700;text-transform:uppercase}
+.total-amount{font-size:24px;font-weight:900;color:#1a0a00;line-height:1.1}
+.r-icon{font-size:14px;font-weight:700;margin-right:2px;opacity:0.7}
+#flash{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;border-radius:40px;padding:12px 24px;z-index:999;box-shadow:0 8px 32px rgba(56,239,125,0.4);font-size:15px;font-weight:600;white-space:nowrap;display:none}
+.tabs{display:flex;max-width:520px;margin:0 auto;padding:12px 20px 0;gap:8px}
+.tab-btn{flex:1;padding:10px 0;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.55);font-weight:600;font-size:13px;cursor:pointer}
+.tab-btn.active{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3)}
+.content{max-width:520px;margin:0 auto;padding:16px 20px 40px}
+.section-title{font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.preset-btn{background:rgba(255,255,255,0.06);border:2px solid;border-radius:14px;padding:14px 10px;cursor:pointer;text-align:center;color:#fff}
+.preset-btn:active{opacity:0.7}
+.p-emoji{font-size:26px;margin-bottom:4px}
+.p-label{font-size:13px;font-weight:700;margin-bottom:3px}
+.p-rob
