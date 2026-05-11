@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>준서의 로벅스 통장 💰</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      font-family: 'Apple SD Gothic Neo', 'Segoe UI', sans-serif;
+      color: #fff;
+    }
+    input, textarea, button { font-family: inherit; }
+    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.35); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const PRESETS = [
+  { id: "kumon",       label: "구몬",          emoji: "📚", robux: 40,  color: "#FF6B35" },
+  { id: "gijeok",     label: "기적",          emoji: "✏️", robux: 10,  color: "#4ECDC4" },
+  { id: "fields_exam",label: "필즈 90점+",    emoji: "🏆", robux: 500, color: "#FFD700" },
+  { id: "word",       label: "단어시험 패스", emoji: "🎯", robux: 50,  color: "#A78BFA" },
+  { id: "brenos",     label: "브레노스 숙제", emoji: "🧠", robux: 30,  color: "#F472B6" },
+  { id: "fields_hw",  label: "필즈 숙제",     emoji: "📐", robux: 30,  color: "#34D399" },
+  { id: "korean",     label: "초등국어 독해", emoji: "🇰🇷", robux: 20,  color: "#60A5FA" },
+  { id: "reading",    label: "독서+독서일지", emoji: "📖", robux: 10,  color: "#FB923C" },
+];
+const STORAGE_KEY = "junseo-robux-data";
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
+}
+function todayKey() { return new Date().toISOString().slice(0, 10); }
+function loadData() {
+  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) return JSON.parse(raw); } catch {}
+  return { log: [], total: 0 };
+}
+function saveData(log, total) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ log, total })); } catch {}
+}
+export default function App() {
+  const [log, setLog] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [flash, setFlash] = useState(null);
+  const [tab, setTab] = useState("home");
+  const [customLabel, setCustomLabel] = useState("");
+  const [customRobux, setCustomRobux] = useState("");
+  const [backupText, setBackupText] = useState("");
+  const [restoreText, setRestoreText] = useState("");
+  const [restoreMsg, setRestoreMsg] = useState("");
+  useEffect(() => { const data = loadData(); setLog(data.log || []); setTotal(data.total || 0); }, []);
+  function addEntry(label, robux, emoji) {
+    const entry = { id: Date.now(), date: todayKey(), label, robux, emoji,
+      ts: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }) };
+    const newLog = [entry, ...log]; const newTotal = total + robux;
+    setLog(newLog); setTotal(newTotal); saveData(newLog, newTotal);
+    setFlash({ robux, label }); setTimeout(() => setFlash(null), 1800);
+  }
+  function handleCustom() {
+    const r = parseInt(customRobux);
+    if (!customLabel.trim() || isNaN(r) || r <= 0) return;
+    addEntry(customLabel.trim(), r, "⭐"); setCustomLabel(""); setCustomRobux("");
+  }
+  function deleteEntry(id) {
+    const entry = log.find(e => e.id === id); if (!entry) return;
+    const newLog = log.filter(e => e.id !== id); const newTotal = Math.max(0, total - entry.robux);
+    setLog(newLog); setTotal(newTotal); saveData(newLog, newTotal);
+  }
+  function handleBackup() { setBackupText(JSON.stringify({ log, total })); }
+  function handleRestore() {
+    try {
+      const data = JSON.parse(restoreText.trim());
+      if (!Array.isArray(data.log)) throw new Error();
+      setLog(data.log); setTotal(data.total || 0); saveData(data.log, data.total || 0);
+      setRestoreMsg("✅ 복원 완료!"); setRestoreText("");
+    } catch { setRestoreMsg("❌ 형식이 맞지 않아요."); }
+    setTimeout(() => setRestoreMsg(""), 3000);
+  }
+  const grouped = log.reduce((acc, e) => { if (!acc[e.date]) acc[e.date] = []; acc[e.date].push(e); return acc; }, {});
+  const s = styles;
+  return (
+    <div style={s.root}>
+      <div style={s.header}><div style={s.headerInner}>
+        <div><div style={s.headerTitle}>준서의 로벅스 통장 💰</div><div style={s.headerSub}>열심히 하면 로벅스가 쌓여요!</div></div>
+        <div style={s.totalBox}><div style={s.totalLabel}>보유 로벅스</div><div style={s.totalAmount}><span style={s.robuxIcon}>R$</span>{total.toLocaleString()}</div></div>
+      </div></div>
+      {flash && <div style={s.flash}>🎉 {flash.label} 완료! <strong style={{marginLeft:4}}>+{flash.robux} R$</strong></div>}
+      <div style={s.tabs}>
+        {[["home","🏠 기록"],["log","📋 내역"],["backup","💾 백업"]].map(([t,label]) => (
+          <button key={t} style={{...s.tab,...(tab===t?s.tabActive:{})}} onClick={()=>setTab(t)}>{label}</button>
+        ))}
+      </div>
+      <div style={s.content}>
+        {tab === "home" && (<>
+          <div style={s.sectionTitle}>오늘 뭐 했어요?</div>
+          <div style={s.presetGrid}>
+            {PRESETS.map(p => (
+              <button key={p.id} style={{...s.presetBtn, borderColor: p.color}} onClick={() => addEntry(p.label, p.robux, p.emoji)}>
+                <div style={s.presetEmoji}>{p.emoji}</div>
+                <div style={s.presetLabel}>{p.label}</div>
+                <div style={{...s.presetRobux, color: p.color}}>+{p.robux} R$</div>
+              </button>
+            ))}
+          </div>
+          <div style={s.customBox}><div style={s.sectionTitle}>직접 입력</div>
+            <div style={s.customRow}>
+              <input style={s.input} placeholder="숙제/시험 이름" value={customLabel} onChange={e => setCustomLabel(e.target.value)} onKeyDown={e => e.key==="Enter"&&handleCustom()} />
+              <input style={{...s.input, width:72, flexShrink:0}} placeholder="R$" type="number" value={customRobux} onChange={e => setCustomRobux(e.target.value)} onKeyDown={e => e.key==="Enter"&&handleCustom()} />
+              <button style={s.addBtn} onClick={handleCustom}>추가</button>
+            </div>
+          </div>
+        </>)}
+        {tab === "log" && (Object.keys(grouped).length === 0
+          ? <div style={s.empty}>아직 기록이 없어요. 첫 숙제를
